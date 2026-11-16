@@ -23,6 +23,7 @@ import io.github.mooy1.infinitylib.common.StackUtils;
 import io.github.mooy1.infinitylib.machines.AbstractMachineBlock;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.ItemUtils;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.attributes.RecipeDisplayItem;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
@@ -41,7 +42,7 @@ public final class SingularityConstructor extends AbstractMachineBlock implement
     private static final List<Recipe> RECIPE_LIST = new ArrayList<>();
     private static final Map<String, Pair<Integer, Recipe>> RECIPE_MAP = new HashMap<>();
     public static final RecipeType TYPE = new RecipeType(InfinityExpansion.createKey("singularity_constructor"),
-            Machines.SINGULARITY_CONSTRUCTOR, (stacks, itemStack) -> {
+            Machines.SINGULARITY_CONSTRUCTOR.item(), (stacks, itemStack) -> {
         int amt = 0;
         for (ItemStack item : stacks) {
             if (item != null) {
@@ -49,7 +50,7 @@ public final class SingularityConstructor extends AbstractMachineBlock implement
             }
         }
         String id = StackUtils.getIdOrType(stacks[0]);
-        Recipe recipe = new Recipe((SlimefunItemStack) itemStack, stacks[0], id, amt);
+        Recipe recipe = new Recipe(itemStack.clone(), stacks[0], id, amt);
         RECIPE_LIST.add(recipe);
         RECIPE_MAP.put(id, new Pair<>(RECIPE_LIST.size() - 1, recipe));
     });
@@ -78,7 +79,7 @@ public final class SingularityConstructor extends AbstractMachineBlock implement
             Recipe triplet = RECIPE_LIST.get(progressID);
 
             if (triplet != null) {
-                ItemStack drop = new CustomItemStack(triplet.input, 64);
+                ItemStack drop = CustomItemStack.create(triplet.input, 64);
 
                 int stacks = progress / 64;
 
@@ -163,17 +164,17 @@ public final class SingularityConstructor extends AbstractMachineBlock implement
                 progressID = null;
 
                 if (menu.hasViewer()) {
-                    menu.replaceExistingItem(STATUS_SLOT, new CustomItemStack(
+                    menu.replaceExistingItem(STATUS_SLOT, CustomItemStack.create(
                             Material.LIME_STAINED_GLASS_PANE,
-                            "&aConstructing " + triplet.output.getDisplayName() + "...",
+                            "&aConstructing " + ItemUtils.getItemName(triplet.output) + "...",
                             "&7Complete"
                     ));
                 }
             }
             else if (menu.hasViewer()) {
-                menu.replaceExistingItem(STATUS_SLOT, new CustomItemStack(
+                menu.replaceExistingItem(STATUS_SLOT, CustomItemStack.create(
                         Material.LIME_STAINED_GLASS_PANE,
-                        "&aConstructing " + triplet.output.getDisplayName() + "...",
+                        "&aConstructing " + ItemUtils.getItemName(triplet.output) + "...",
                         "&7" + progress + " / " + triplet.amount
                 ));
             }
@@ -229,7 +230,7 @@ public final class SingularityConstructor extends AbstractMachineBlock implement
     }
 
     private static void invalidInput(BlockMenu menu) {
-        menu.replaceExistingItem(STATUS_SLOT, new CustomItemStack(
+        menu.replaceExistingItem(STATUS_SLOT, CustomItemStack.create(
                 Material.RED_STAINED_GLASS_PANE,
                 "&cInput a valid material to start"
         ));
@@ -280,7 +281,7 @@ public final class SingularityConstructor extends AbstractMachineBlock implement
     @AllArgsConstructor
     private static final class Recipe {
 
-        private final SlimefunItemStack output;
+        private final ItemStack output;
         private final ItemStack input;
         private final String id;
         private final int amount;
