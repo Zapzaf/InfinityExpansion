@@ -18,12 +18,21 @@ import io.github.thebusybiscuit.slimefun4.implementation.items.armor.SlimefunArm
 
 /**
  * armor
+ * <p>
+ * Whether it gives potion effects and is soulbound comes from {@code gear-options} in the config: Slimefun treats
+ * an item as soulbound when its class implements {@link Soulbound}, so the soulbound armor is a subclass.
  *
  * @author Mooy1
  */
-public final class InfinityArmor extends SlimefunArmorPiece implements ProtectiveArmor, Soulbound, NotPlaceable {
+public class InfinityArmor extends SlimefunArmorPiece implements ProtectiveArmor, NotPlaceable {
 
     private static final NamespacedKey KEY = InfinityExpansion.createKey("infinity_armor");
+
+    /** Infinity armor with the given potion effects, soulbound or not. */
+    @Nonnull
+    public static InfinityArmor create(SlimefunItemStack item, PotionEffect[] effects, ItemStack[] recipe, boolean soulbound) {
+        return soulbound ? new WithSoulbound(item, effects, recipe) : new InfinityArmor(item, effects, recipe);
+    }
 
     public InfinityArmor(SlimefunItemStack item, PotionEffect[] effects, ItemStack[] recipe) {
         super(Groups.INFINITY_CHEAT, item, InfinityWorkbench.TYPE, recipe, effects);
@@ -46,6 +55,15 @@ public final class InfinityArmor extends SlimefunArmorPiece implements Protectiv
     @Override
     public NamespacedKey getArmorSetId() {
         return KEY;
+    }
+
+    /** Infinity armor that stays in the inventory on death. */
+    public static final class WithSoulbound extends InfinityArmor implements Soulbound {
+
+        public WithSoulbound(SlimefunItemStack item, PotionEffect[] effects, ItemStack[] recipe) {
+            super(item, effects, recipe);
+        }
+
     }
 
 }

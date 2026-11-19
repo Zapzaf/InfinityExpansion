@@ -69,6 +69,22 @@ advanced-anvil-max-levels:
   looting: 6
   unbreaking: 13
 
+# Infinity gear (armor, weapons, tools and the bow). Changes need a restart.
+gear-options:
+
+  # The potion effects the Infinity armor gives whoever wears it: Night Vision, Conduit Power (crown),
+  # Strength, Resistance, Fire Resistance (chestplate), Haste, Regeneration, Saturation (leggings),
+  # Speed, Dolphins Grace (boots). The immunities (radiation, bees, elytra crash) are not affected.
+  armor-potion-effects: false
+
+  # The Slowness, Jump Boost and freezing the Sky Piercer (Infinity Bow) gives a target it hits.
+  # Its explosion is not affected.
+  bow-potion-effects: false
+
+  # Infinity armor, weapons, tools and the bow stay in your inventory when you die.
+  # Also affects items players already have. (The Infinity Matrix is always soulbound.)
+  soulbound: false
+
 # levels of infinity gear. this will not affect existing items. adding more enchants wont have any effect, only change levels. 
 # protection caps out at 20 levels across all 4 pieces of gear. So 10+10+10+10 is still the same as 5+5+5+5.
 infinity-enchant-levels:

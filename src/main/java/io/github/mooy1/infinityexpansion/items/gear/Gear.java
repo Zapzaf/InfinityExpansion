@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Level;
 
 import lombok.experimental.UtilityClass;
@@ -116,7 +117,16 @@ public final class Gear {
     );
 
     public static void setup(InfinityExpansion plugin) {
-        addInfinityEnchants(plugin,
+        // gear-options in the config
+        boolean armorEffects = plugin.getConfig().getBoolean("gear-options.armor-potion-effects");
+        boolean bowEffects = plugin.getConfig().getBoolean("gear-options.bow-potion-effects");
+        boolean soulbound = plugin.getConfig().getBoolean("gear-options.soulbound");
+
+        if (!armorEffects) {
+            removeEffectLore(CROWN, CHESTPLATE, LEGGINGS, BOOTS);
+        }
+
+        addInfinityEnchants(plugin, soulbound,
                 CROWN, CHESTPLATE, LEGGINGS, BOOTS,
                 AXE, BLADE, PICKAXE,
                 SHIELD, SHOVEL, BOW
@@ -129,100 +139,100 @@ public final class Gear {
                 Materials.ENDER_ESSENCE.item(), new ItemStack(Material.BOOK), Materials.ENDER_ESSENCE.item(),
                 Materials.ENDER_ESSENCE.item(), Materials.ENDER_ESSENCE.item(), Materials.ENDER_ESSENCE.item()
         }).register(plugin);
-        new InfinityArmor(CROWN, new PotionEffect[] {
+        InfinityArmor.create(CROWN, armorEffects ? new PotionEffect[] {
                 new PotionEffect(PotionEffectType.NIGHT_VISION, 600, 0, false, false, false),
                 new PotionEffect(PotionEffectType.CONDUIT_POWER, 600, 0, false, false, false),
-        }, new ItemStack[] {
+        } : NO_EFFECTS, new ItemStack[] {
                 null, Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), null,
                 Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(),
                 Materials.INFINITE_INGOT.item(), Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(),
                 null, Materials.INFINITE_INGOT.item(), null, null, Materials.INFINITE_INGOT.item(), null,
                 null, null, null, null, null, null,
                 null, null, null, null, null, null
-        }).register(plugin);
-        new InfinityArmor(CHESTPLATE, new PotionEffect[] {
+        }, soulbound).register(plugin);
+        InfinityArmor.create(CHESTPLATE, armorEffects ? new PotionEffect[] {
                 new PotionEffect(PotionEffectType.RESISTANCE, 600, 0, false, false, false),
                 new PotionEffect(PotionEffectType.STRENGTH, 600, 1, false, false, false),
                 new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 600, 0, false, false, false)
-        }, new ItemStack[] {
+        } : NO_EFFECTS, new ItemStack[] {
                 null, Materials.INFINITE_INGOT.item(), null, null, Materials.INFINITE_INGOT.item(), null,
                 Materials.INFINITE_INGOT.item(), Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(),
                 Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.VOID_INGOT.item(),
                 Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.VOID_INGOT.item(), Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.VOID_INGOT.item(),
                 null, Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), null,
                 null, Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), null
-        }).register(plugin);
-        new InfinityArmor(LEGGINGS, new PotionEffect[] {
+        }, soulbound).register(plugin);
+        InfinityArmor.create(LEGGINGS, armorEffects ? new PotionEffect[] {
                 new PotionEffect(PotionEffectType.HASTE, 600, 2, false, false, false),
                 new PotionEffect(PotionEffectType.REGENERATION, 600, 0, false, false, false),
                 new PotionEffect(PotionEffectType.SATURATION, 600, 0, false, false, false),
-        }, new ItemStack[] {
+        } : NO_EFFECTS, new ItemStack[] {
                 null, Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), null,
                 Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(),
                 Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(), null, null, Materials.INFINITE_INGOT.item(), Materials.VOID_INGOT.item(),
                 Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(), null, null, Materials.INFINITE_INGOT.item(), Materials.VOID_INGOT.item(),
                 Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(), null, null, Materials.INFINITE_INGOT.item(), Materials.VOID_INGOT.item(),
                 null, Materials.INFINITE_INGOT.item(), null, null, Materials.INFINITE_INGOT.item(), null
-        }).register(plugin);
-        new InfinityArmor(BOOTS, new PotionEffect[] {
+        }, soulbound).register(plugin);
+        InfinityArmor.create(BOOTS, armorEffects ? new PotionEffect[] {
                 new PotionEffect(PotionEffectType.SPEED, 600, 2, false, false, false),
                 new PotionEffect(PotionEffectType.DOLPHINS_GRACE, 600, 0, false, false, false),
-        }, new ItemStack[] {
+        } : NO_EFFECTS, new ItemStack[] {
                 null, null, null, null, null, null,
                 Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), null, null, Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(),
                 Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), null, null, Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(),
                 Materials.VOID_INGOT.item(), Materials.VOID_INGOT.item(), null, null, Materials.VOID_INGOT.item(), Materials.VOID_INGOT.item(),
                 Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), null, null, Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(),
                 Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), null, null, Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item()
-        }).register(plugin);
-        new InfinityTool(SHIELD, new ItemStack[] {
+        }, soulbound).register(plugin);
+        InfinityTool.create(SHIELD, new ItemStack[] {
                 Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), null, null, Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(),
                 Materials.INFINITE_INGOT.item(), Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(),
                 Materials.INFINITE_INGOT.item(), Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(),
                 Materials.INFINITE_INGOT.item(), Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(),
                 null, Materials.INFINITE_INGOT.item(), Materials.VOID_INGOT.item(), Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(), null,
                 null, Materials.INFINITE_INGOT.item(), Materials.VOID_INGOT.item(), Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(), null
-        }).register(plugin);
-        new InfinityBow(Groups.INFINITY_CHEAT, BOW, InfinityWorkbench.TYPE, new ItemStack[] {
+        }, soulbound).register(plugin);
+        InfinityBow.create(Groups.INFINITY_CHEAT, BOW, InfinityWorkbench.TYPE, new ItemStack[] {
                 null, Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.VOID_INGOT.item(), null, null,
                 Materials.INFINITE_INGOT.item(), null, Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.VOID_INGOT.item(), null,
                 Materials.VOID_INGOT.item(), null, null, ENDER_FLAME.item(), Materials.INFINITE_INGOT.item(), Materials.VOID_INGOT.item(),
                 null, Materials.VOID_INGOT.item(), null, null, Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(),
                 null, null, Materials.VOID_INGOT.item(), null, null, Materials.INFINITE_INGOT.item(),
                 null, null, null, Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(), null
-        }).register(plugin);
-        new InfinityTool(AXE, new ItemStack[] {
+        }, bowEffects, soulbound).register(plugin);
+        InfinityTool.create(AXE, new ItemStack[] {
                 null, Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), null, null,
                 Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.VOID_INGOT.item(), null,
                 null, Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(),
                 null, null, Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(),
                 null, Materials.VOID_INGOT.item(), null, Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.VOID_INGOT.item(),
                 Materials.VOID_INGOT.item(), null, null, null, Materials.VOID_INGOT.item(), null
-        }).register(plugin);
-        new InfinityTool(BLADE, new ItemStack[] {
+        }, soulbound).register(plugin);
+        InfinityTool.create(BLADE, new ItemStack[] {
                 null, null, null, null, Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(),
                 null, null, null, Materials.INFINITE_INGOT.item(), Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(),
                 null, null, Materials.INFINITE_INGOT.item(), Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(), null,
                 Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(), null, null,
                 null, Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(), null, null, null,
                 Materials.VOID_INGOT.item(), null, Materials.INFINITE_INGOT.item(), null, null, null
-        }).register(plugin);
-        new InfinityTool(SHOVEL, new ItemStack[] {
+        }, soulbound).register(plugin);
+        InfinityTool.create(SHOVEL, new ItemStack[] {
                 null, null, null, Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(),
                 null, null, Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(),
                 null, null, Materials.INFINITE_INGOT.item(), Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(),
                 null, null, Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), null,
                 null, Materials.VOID_INGOT.item(), null, null, null, null,
                 Materials.VOID_INGOT.item(), null, null, null, null, null
-        }).register(plugin);
-        new InfinityTool(PICKAXE, new ItemStack[] {
+        }, soulbound).register(plugin);
+        InfinityTool.create(PICKAXE, new ItemStack[] {
                 null, Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), null,
                 null, null, null, Materials.INFINITE_INGOT.item(), Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(),
                 null, null, null, Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(),
                 null, null, Materials.VOID_INGOT.item(), null, null, Materials.INFINITE_INGOT.item(),
                 null, Materials.VOID_INGOT.item(), null, null, null, Materials.VOID_INGOT.item(),
                 Materials.VOID_INGOT.item(), null, null, null, null, null
-        }).register(plugin);
+        }, soulbound).register(plugin);
         new InfinityMatrix(Groups.INFINITY_CHEAT, INFINITY_MATRIX, InfinityWorkbench.TYPE, new ItemStack[] {
                 Materials.INFINITE_INGOT.item(), null, Materials.INFINITE_INGOT.item(), Materials.INFINITE_INGOT.item(), null, Materials.INFINITE_INGOT.item(),
                 Materials.INFINITE_INGOT.item(), Materials.VOID_INGOT.item(), Materials.VOID_INGOT.item(), Materials.VOID_INGOT.item(), Materials.VOID_INGOT.item(), Materials.INFINITE_INGOT.item(),
@@ -238,7 +248,28 @@ public final class Gear {
         }).register(plugin);
     }
 
-    private static void addInfinityEnchants(InfinityExpansion plugin, SlimefunItemStack... items) {
+    private static final PotionEffect[] NO_EFFECTS = new PotionEffect[0];
+
+    /** The lore lines of the armor's potion effects, removed when gear-options.armor-potion-effects is off. */
+    private static final Set<String> EFFECT_LORE = Set.of(
+            "Night Vision I", "Conduit Power I",
+            "Strength II", "Resistance I", "Fire Resistance I",
+            "Haste III", "Regeneration I", "Saturation I",
+            "Speed III", "Dolphins Grace I"
+    );
+
+    private static void removeEffectLore(SlimefunItemStack... items) {
+        for (SlimefunItemStack item : items) {
+            ItemMeta meta = item.getItemMeta();
+            List<String> lore = meta.getLore();
+            if (lore != null && lore.removeIf(line -> EFFECT_LORE.contains(ChatColor.stripColor(line)))) {
+                meta.setLore(lore);
+                item.setItemMeta(meta);
+            }
+        }
+    }
+
+    private static void addInfinityEnchants(InfinityExpansion plugin, boolean soulbound, SlimefunItemStack... items) {
         ConfigurationSection typeSection = plugin.getConfig().getConfigurationSection("infinity-enchant-levels");
 
         if (typeSection == null) {
@@ -257,7 +288,9 @@ public final class Gear {
             else {
                 lore = new ArrayList<>();
             }
-            lore.add(ChatColor.AQUA + "Soulbound");
+            if (soulbound) {
+                lore.add(ChatColor.AQUA + "Soulbound");
+            }
             meta.setLore(lore);
 
             // find path

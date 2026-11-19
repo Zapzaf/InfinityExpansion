@@ -20,12 +20,26 @@ import io.github.thebusybiscuit.slimefun4.core.handlers.BowShootHandler;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.items.weapons.ExplosiveBow;
 
-public final class InfinityBow extends ExplosiveBow implements NotPlaceable, Soulbound {
+public class InfinityBow extends ExplosiveBow implements NotPlaceable {
+
+    /** Whether a hit gives the target Slowness, Jump Boost and freezing (`gear-options.bow-potion-effects`). */
+    private final boolean hitEffects;
+
+    /** The Sky Piercer, soulbound or not (`gear-options.soulbound`). */
+    @Nonnull
+    @ParametersAreNonnullByDefault
+    public static InfinityBow create(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe,
+                                     boolean hitEffects, boolean soulbound) {
+        return soulbound
+                ? new WithSoulbound(itemGroup, item, recipeType, recipe, hitEffects)
+                : new InfinityBow(itemGroup, item, recipeType, recipe, hitEffects);
+    }
 
     @ParametersAreNonnullByDefault
-    public InfinityBow(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
+    public InfinityBow(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, boolean hitEffects) {
         super(itemGroup, item, recipe);
         setRecipeType(recipeType);
+        this.hitEffects = hitEffects;
     }
 
     @Nonnull
@@ -34,6 +48,10 @@ public final class InfinityBow extends ExplosiveBow implements NotPlaceable, Sou
         BowShootHandler explosive = super.onShoot();
         return (e, target) -> {
             explosive.onHit(e, target);
+
+            if (!hitEffects) {
+                return;
+            }
 
             if (target instanceof Player) {
                 Player p = (Player) target;
@@ -53,6 +71,16 @@ public final class InfinityBow extends ExplosiveBow implements NotPlaceable, Sou
             target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20 * 2, 10));
             target.addPotionEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, 20 * 2, -10));
         };
+    }
+
+    /** The Sky Piercer that stays in the inventory on death. */
+    public static final class WithSoulbound extends InfinityBow implements Soulbound {
+
+        @ParametersAreNonnullByDefault
+        public WithSoulbound(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, boolean hitEffects) {
+            super(itemGroup, item, recipeType, recipe, hitEffects);
+        }
+
     }
 
 }
